@@ -121,8 +121,28 @@ brat_przyrodni(X,Y) :- mezczyzna(X),
 
 %==============================================================================%
 
+kuzynka(X,Y).
+kuzyn(X,Y).
+ciocia(X,Y).
+wujek(X,Y).
+stryjenka(X,Y).
+stryjek(X,Y).
 
+%==============================================================================%
 
+szwagierka(X,Y).
+szwagier(X,Y).
+macocha(X,Y).
+ojczym(X,Y).
+pasierb(X,Y).
+pasierbica(X,Y).
+
+%==============================================================================%
+
+babcia_od_strony_matki(X,Y).
+babcia_od_strony_ojca(X,Y).
+dziadek_od_strony_matki(X,Y).
+dziadek_od_strony_ojca(X,Y).
 
 
 
