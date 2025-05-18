@@ -68,19 +68,19 @@ rodzic(sebastian_tkacz, brajan_tkacz).
 
 %==============================================================================%
 % I
-malzenstwo_f(genowefa_kowal, stanislaw_kowal).
-malzenstwo_f(zofia_kowal, stanislaw_kowal).
+malzenstwo(genowefa_kowal, stanislaw_kowal).
+malzenstwo(zofia_kowal, stanislaw_kowal).
 % II
-malzenstwo_f(bozena_kowal, roman_kowal).
-malzenstwo_f(zofia_kowalska, stanislaw_kowalski).
+malzenstwo(bozena_kowal, roman_kowal).
+malzenstwo(zofia_kowalska, stanislaw_kowalski).
 % III
-malzenstwo_f(maria_tkacz, arkadiusz_tkacz).
-malzenstwo_f(dorota_kowal, krzysztof_kowal).
-malzenstwo_f(danuta_kowalska, lech_kowalski).
+malzenstwo(maria_tkacz, arkadiusz_tkacz).
+malzenstwo(dorota_kowal, krzysztof_kowal).
+malzenstwo(danuta_kowalska, lech_kowalski).
 % IV
-malzenstwo_f(dzesika_tkacz, sebastian_tkacz).
+malzenstwo(dzesika_tkacz, sebastian_tkacz).
 
-malzenstwo(X,Y) :- malzenstwo_f(X,Y) ; malzenstwo_f(Y,X).  
+%malzenstwo(X,Y) :- malzenstwo_f(X,Y) ; malzenstwo_f(Y,X).  % przemiennosc 
 
 %==============================================================================%
 
@@ -107,43 +107,49 @@ brat_rodzony(X,Y) :- mezczyzna(X),
     ojciec(O,X), ojciec(O,Y),
     X \= Y.
 
+rodzenstwo(X,Y) :- siostra_rodzona(X,Y) ; brat_rodzony(X,Y) ; siostra_przyrodnia(X,Y) ; brat_przyrodni(X,Y).
+
+siostra(X,Y) :- siostra_rodzona(X,Y) ; siostra_przyrodnia(X,Y). 
+brat(X,Y) :- brat_rodzony(X,Y) ; brat_przyrodni(X,Y). 
+
 % % % % % % % % % % % % % % % % 
 
 siostra_przyrodnia(X,Y) :- kobieta(X), 
-    matka(M,X), matka(M,Y) ;
-    ojciec(O,X), ojciec(O,Y),			% zle
-    X \= Y.
+    rodzic(Rodzic1, X), rodzic(Rodzic1, Y), \+ (rodzic(Rodzic2, X), rodzic(Rodzic2, Y), 
+	Rodzic1 \= Rodzic2), 
+    X \= Y. 
+
 
 brat_przyrodni(X,Y) :- mezczyzna(X), 
-    matka(M,X), matka(M,Y) ;
-    ojciec(O,X), ojciec(O,Y),		   % zle
-    X \= Y.
-
+    rodzic(Rodzic1, X), rodzic(Rodzic1, Y), \+ (rodzic(Rodzic2, X), rodzic(Rodzic2, Y), 
+	Rodzic1 \= Rodzic2), 
+    X \= Y. 
+    
 %==============================================================================%
 
-kuzynka(X,Y).
-kuzyn(X,Y).
-ciocia(X,Y).
-wujek(X,Y).
-stryjenka(X,Y).
-stryjek(X,Y).
+kuzynka(X,Y) :- kobieta(X), rodzic(Z,Y), rodzenstwo(Z,P), corka(X,P).
+kuzyn(X,Y) :- mezczyzna(X), rodzic(Z,Y), rodzenstwo(Z,P), syn(X,P).
+ciocia(X,Y) :- kobieta(X), ( rodzic(Z,Y), rodzenstwo(Z,X) ; malzenstwo(X,P), brat(P,Z), rodzic(Z,Y)).
+wujek(X,Y) :- mezczyzna(X), (matka(Z,Y), rodzenstwo(Z,X)) ; malzenstwo(X,P), siostra(P,Z), rodzic(Z,Y).
+stryj(X,Y) :- mezczyzna(X), ojciec(Z,Y), brat(Z,X).
+stryjenka(X,Y) :- kobieta(X), stryj(Z,Y), malzenstwo(Z,X).
 
 %==============================================================================%
-
+/*
 szwagierka(X,Y).
 szwagier(X,Y).
 macocha(X,Y).
 ojczym(X,Y).
-pasierb(X,Y).
-pasierbica(X,Y).
+*/
+pasierb(X,Y) :- mezczyzna(X), (malzenstwo(Y,Z), syn(X,Z), \+ syn(X,Y)) ; (malzenstwo(Z,Y), syn(X,Z), \+ syn(X,Y)).
+pasierbica(X,Y) :- kobieta(X), malzenstwo(Z,Y), rodzic(Z,X), \+ rodzic(Y,Z).
 
 %==============================================================================%
 
-babcia_od_strony_matki(X,Y).
-babcia_od_strony_ojca(X,Y).
-dziadek_od_strony_matki(X,Y).
-dziadek_od_strony_ojca(X,Y).
-
+babcia_od_strony_matki(X,Y) :- kobieta(X), matka(X, M), matka(M, Y).   
+babcia_od_strony_ojca(X,Y) :- kobieta(X), matka(X, M), ojciec(M, Y). 
+dziadek_od_strony_matki(X,Y) :- mezczyzna(X), ojciec(X, M), matka(M, Y). 
+dziadek_od_strony_ojca(X,Y) :- mezczyzna(X), ojciec(X, M), ojciec(M, Y).   
 
 
 
