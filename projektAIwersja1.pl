@@ -61,7 +61,7 @@ rodzic(danuta_kowalska, grzegorz_kowalski).  % grzesiek
 rodzic(lech_kowalski, grzegorz_kowalski).    % grzesiek
 rodzic(danuta_kowalska, marek_kowalski).     % marek
 rodzic(lech_kowalski, marek_kowalski).       % marek
-rodzic(irena_zieba, julia_zieba).			 % julcia
+rodzic(irena_zieba, julia_zieba).			 % julcia 
 % IV->V
 rodzic(dzesika_tkacz, brajan_tkacz).
 rodzic(sebastian_tkacz, brajan_tkacz).
@@ -108,7 +108,6 @@ brat_rodzony(X,Y) :- mezczyzna(X),
     X \= Y.
 
 rodzenstwo(X,Y) :- siostra_rodzona(X,Y) ; brat_rodzony(X,Y) ; siostra_przyrodnia(X,Y) ; brat_przyrodni(X,Y).
-
 siostra(X,Y) :- siostra_rodzona(X,Y) ; siostra_przyrodnia(X,Y). 
 brat(X,Y) :- brat_rodzony(X,Y) ; brat_przyrodni(X,Y). 
 
@@ -118,7 +117,6 @@ siostra_przyrodnia(X,Y) :- kobieta(X),
     rodzic(Rodzic1, X), rodzic(Rodzic1, Y), \+ (rodzic(Rodzic2, X), rodzic(Rodzic2, Y), 
 	Rodzic1 \= Rodzic2), 
     X \= Y. 
-
 
 brat_przyrodni(X,Y) :- mezczyzna(X), 
     rodzic(Rodzic1, X), rodzic(Rodzic1, Y), \+ (rodzic(Rodzic2, X), rodzic(Rodzic2, Y), 
@@ -135,14 +133,17 @@ stryj(X,Y) :- mezczyzna(X), ojciec(Z,Y), brat(Z,X).
 stryjenka(X,Y) :- kobieta(X), stryj(Z,Y), malzenstwo(Z,X).
 
 %==============================================================================%
-/*
-szwagierka(X,Y).
-szwagier(X,Y).
-macocha(X,Y).
-ojczym(X,Y).
-*/
+
+szwagier(X,Y) :- mezczyzna(X), (brat(X, Maz), malzenstwo(Y, Maz)) ; 
+    (malzenstwo(Siostra, X), siostra(Siostra, Y)) ; (brat(X, Zona),malzenstwo(Zona, Y)). 
+szwagierka(X,Y) :- kobieta(X), (siostra(X, Maz), malzenstwo(Y, Maz)) ;
+    (siostra(X, Zona), malzenstwo(Zona, Y)) ; (malzenstwo(X, Brat), brat(Brat, Y)) ;
+    (malzenstwo(Zona, Y), brat(Brat, Zona), malzenstwo(X, Brat)).
+
+macocha(X,Y) :- kobieta(X), malzenstwo(X,Z), ojciec(Z,Y), \+ rodzic(X,Y).
+ojczym(X,Y) :- mezczyzna(X), malzenstwo(Z,X), matka(Z,Y), \+ rodzic(X,Y).
 pasierb(X,Y) :- mezczyzna(X), (malzenstwo(Y,Z), syn(X,Z), \+ syn(X,Y)) ; (malzenstwo(Z,Y), syn(X,Z), \+ syn(X,Y)).
-pasierbica(X,Y) :- kobieta(X), malzenstwo(Z,Y), rodzic(Z,X), \+ rodzic(Y,Z).
+pasierbica(X, Y) :- kobieta(X), malzenstwo(Rodzic, Y), rodzic(Rodzic, X), \+ rodzic(Y, X).
 
 %==============================================================================%
 
