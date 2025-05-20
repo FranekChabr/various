@@ -108,8 +108,8 @@ brat_rodzony(X,Y) :- mezczyzna(X),
     X \= Y.
 
 rodzenstwo(X,Y) :- siostra_rodzona(X,Y) ; brat_rodzony(X,Y) ; siostra_przyrodnia(X,Y) ; brat_przyrodni(X,Y).
-siostra(X,Y) :- siostra_rodzona(X,Y) ; siostra_przyrodnia(X,Y). 
-brat(X,Y) :- brat_rodzony(X,Y) ; brat_przyrodni(X,Y). 
+siostra(X,Y) :- siostra_rodzona(X,Y) ; siostra_przyrodnia(X,Y).  % oba na raz
+brat(X,Y) :- brat_rodzony(X,Y) ; brat_przyrodni(X,Y). 			 % oba na raz
 
 % % % % % % % % % % % % % % % % 
 
@@ -127,7 +127,7 @@ brat_przyrodni(X,Y) :- mezczyzna(X),
 
 kuzynka(X,Y) :- kobieta(X), rodzic(Z,Y), rodzenstwo(Z,P), corka(X,P).
 kuzyn(X,Y) :- mezczyzna(X), rodzic(Z,Y), rodzenstwo(Z,P), syn(X,P).
-ciocia(X,Y) :- kobieta(X), ( rodzic(Z,Y), rodzenstwo(Z,X) ; malzenstwo(X,P), brat(P,Z), rodzic(Z,Y)).
+ciocia(X,Y) :- kobieta(X), (rodzic(Z,Y), rodzenstwo(Z,X) ; malzenstwo(X,P), brat(P,Z), rodzic(Z,Y)).
 wujek(X,Y) :- mezczyzna(X), (matka(Z,Y), rodzenstwo(Z,X)) ; malzenstwo(X,P), siostra(P,Z), rodzic(Z,Y).
 stryj(X,Y) :- mezczyzna(X), ojciec(Z,Y), brat(Z,X).
 stryjenka(X,Y) :- kobieta(X), stryj(Z,Y), malzenstwo(Z,X).
@@ -135,26 +135,55 @@ stryjenka(X,Y) :- kobieta(X), stryj(Z,Y), malzenstwo(Z,X).
 %==============================================================================%
 
 szwagier(X,Y) :- mezczyzna(X), (brat(X, Maz), malzenstwo(Y, Maz)) ; 
-    (malzenstwo(Siostra, X), siostra(Siostra, Y)) ; (brat(X, Zona),malzenstwo(Zona, Y)). 
+    (malzenstwo(Siostra, X), siostra(Siostra, Y)) ; 
+    (brat(X, Zona),malzenstwo(Zona, Y)). 
+% X jest mezczyzna, X jest bratem meza Y   lub
+% X jest mężem siostry Y 				   lub
+% X jest bratem zony Y
+
 szwagierka(X,Y) :- kobieta(X), (siostra(X, Maz), malzenstwo(Y, Maz)) ;
-    (siostra(X, Zona), malzenstwo(Zona, Y)) ; (malzenstwo(X, Brat), brat(Brat, Y)) ;
+    (siostra(X, Zona), malzenstwo(Zona, Y)) ;
+    (malzenstwo(X, Brat), brat(Brat, Y)) ;
     (malzenstwo(Zona, Y), brat(Brat, Zona), malzenstwo(X, Brat)).
+% X jest kobieta, X jest siostra meza Y    lub
+% X jest siostra zony Y                    lub
+% X jest zona brata Y                      lub
+% X jest zona brata zony Y
 
 macocha(X,Y) :- kobieta(X), malzenstwo(X,Z), ojciec(Z,Y), \+ rodzic(X,Y).
 ojczym(X,Y) :- mezczyzna(X), malzenstwo(Z,X), matka(Z,Y), \+ rodzic(X,Y).
 pasierb(X,Y) :- mezczyzna(X), (malzenstwo(Y,Z), syn(X,Z), \+ syn(X,Y)) ; (malzenstwo(Z,Y), syn(X,Z), \+ syn(X,Y)).
-pasierbica(X, Y) :- kobieta(X), malzenstwo(Rodzic, Y), rodzic(Rodzic, X), \+ rodzic(Y, X).
+pasierbica(X,Y) :- kobieta(X), rodzic(Rodzic, X), malzenstwo(Rodzic, Y), \+ rodzic(Y, X).
 
 %==============================================================================%
 
-babcia_od_strony_matki(X,Y) :- kobieta(X), matka(X, M), matka(M, Y).   
-babcia_od_strony_ojca(X,Y) :- kobieta(X), matka(X, M), ojciec(M, Y). 
-dziadek_od_strony_matki(X,Y) :- mezczyzna(X), ojciec(X, M), matka(M, Y). 
-dziadek_od_strony_ojca(X,Y) :- mezczyzna(X), ojciec(X, M), ojciec(M, Y).   
+babcia_od_strony_matki(X,Y) :- matka(X, M), matka(M, Y).   
+babcia_od_strony_ojca(X,Y) :- matka(X, M), ojciec(M, Y). 
+dziadek_od_strony_matki(X,Y) :- ojciec(X, M), matka(M, Y). 
+dziadek_od_strony_ojca(X,Y) :- ojciec(X, M), ojciec(M, Y).   
 
+% wymyslanki: =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+syn_stryja(X,Y) :- stryj(Z,Y), syn(X,Z).
+przyszywana_babka(X,Y) :- malzenstwo(X,Z), dziadek(Z,Y), \+ babcia(X,Y).
+wujek_wujka(X,Y) :- wujek(X,Z), wujek(Z,Y). 
+wujek_szwagra(X,Y) :- wujek(X,Z), szwagier(Z,Y). 
+zona_brata_zony(X,Y) :- malzenstwo(X,Z), brat(Z,P), malzenstwo(P,Y). 
+przyszywany_wujek(X,Y) :- brat_przyrodni(X,M), matka(M,Y).
 
+szwagier_brat_meza(X,Y) :- szwagier(X,Y), brat(X,Z), malzenstwo(Y,Z). 
+szwagier_brat_zony(X,Y) :- szwagier(X,Y), brat(X,Z), malzenstwo(Z,Y). 
+zona_kuzyna(X,Y) :- malzenstwo(X,Z), kuzyn(Z,Y). 
+maz_kuzynki(X,Y) :- malzenstwo(Z,X), kuzynka(Z,Y).
+szwagier_ojca(X,Y) :- szwagier(X,Z), ojciec(Z,Y).
+brat_dziadka(X,Y) :- brat(X,Z), dziadek(Z,Y).
+syn_corki(X,Y) :- syn(X,Z), corka(Z,Y).
+siostra_syna(X,Y) :- siostra(X,Z), syn(Z,Y).
+stary_stryj_kawaler(X,Y) :- stryj(X,Y), \+ rodzic(X,_). 
 
+tesc(X,Y) :- ojciec(X,Z), malzenstwo(Z,Y). %ojciec zony
+
+ciocia_stara_panna(X,Y) :- ciocia(X,Y), \+ rodzic(X,_), \+ malzenstwo(X,_). 
 
 
 
