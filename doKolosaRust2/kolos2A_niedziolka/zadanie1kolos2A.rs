@@ -1,17 +1,17 @@
 fn email(s: &str) -> bool {
-    // Sprawdź dozwolone znaki
+    // sprawdzanie znakow
     if !s.chars().all(|c| c.is_ascii_alphanumeric() || c == '.' || c == '@') {
         return false;
     }
 
-    // Sprawdź pierwszy i ostatni znak
+    // pierwszy ostatni
     let first = s.chars().next().unwrap();
     let last = s.chars().last().unwrap();
     if !first.is_ascii_alphanumeric() || !last.is_ascii_alphanumeric() {
         return false;
     }
 
-    // Sprawdź, czy jest dokładnie jedna małpa
+    // jedna malpa
     let parts: Vec<&str> = s.split('@').collect();
     if parts.len() != 2 {
         return false;
@@ -19,17 +19,17 @@ fn email(s: &str) -> bool {
 
     let (local, domain) = (parts[0], parts[1]);
 
-    // Obie części muszą być niepuste
+    // opie czesci nie puste
     if local.is_empty() || domain.is_empty() {
         return false;
     }
 
-    // Część po małpie musi zawierać kropkę i nie może zaczynać się ani kończyć kropką
+    // po @ musi zawierac kropke i nie moze zaczynac sei ani konczyc kropka
     if !domain.contains('.') || domain.starts_with('.') || domain.ends_with('.') {
         return false;
     }
 
-    // Część przed małpą nie może zaczynać się ani kończyć kropką
+    // przed @ nie moga zaczynac ani konczyc sie kropka
     if local.starts_with('.') || local.ends_with('.') {
         return false;
     }
@@ -52,3 +52,4 @@ fn main() {
         println!("{} -> {}", addr, email(addr));
     }
 }
+
