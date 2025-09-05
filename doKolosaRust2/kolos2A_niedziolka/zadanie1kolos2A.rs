@@ -19,7 +19,7 @@ fn email(s: &str) -> bool {
 
     let (local, domain) = (parts[0], parts[1]);
 
-    // opie czesci nie puste
+    // obie czesci nie puste
     if local.is_empty() || domain.is_empty() {
         return false;
     }
@@ -52,4 +52,5 @@ fn main() {
         println!("{} -> {}", addr, email(addr));
     }
 }
+
 
