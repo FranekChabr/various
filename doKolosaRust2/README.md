@@ -78,8 +78,24 @@ struct User {
 
 fn main() {
     let u1 = User { name: "Ala".to_string(), age: 20 };
+    // Debug
     println!("{:?}", u1);
+    // Clone
+    let u2 = u1.clone();
+    println!("Skopiowany użytkownik: {:?}", u2);
+
+    // PartialEq (porównanie struktur)
+    if u1 == u2 {
+        println!("u1 i u2 są takie same!");
+    } else {
+        println!("u1 i u2 różnią się.");
+    }
+    let u3 = User { name: "Ola".to_string(), age: 22 };
+    if u1 != u3 {
+        println!("u1 i u3 to różni użytkownicy.");
+    }
 }
+
 ```
 
 ## 5. Vec
