@@ -7,19 +7,7 @@ Poniżej komplet plików. Skopiuj strukturę do nowego projektu (`cargo new kolo
 - binarka 2 (Student): `cargo run --bin show_student`
 
 ---
-
-**Cargo.toml**
-```toml
-[package]
-name = "kolokwium3_b"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-```
-
----
-
+    
 **src/lib.rs**
 ```rust
 pub mod ocena;
@@ -266,3 +254,4 @@ fn main() {
         println!("Ocena z Fizyki: {}", o.jako_liczba());
     }
 }
+
